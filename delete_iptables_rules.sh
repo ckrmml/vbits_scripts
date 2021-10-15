@@ -9,13 +9,14 @@ iptables_delete ()
     fi;
 
     CHAIN=$1
-    RULES=${@:2}
+    RULES=("${@:2}")
     
-    echo "Got chain $CHAIN - rules to delete: $RULES"
+    echo "Got chain $CHAIN"
+    echo "  rules to delete: " "${RULES[@]}"
 
     DELIMITER="-"
     RULES_ARRAY=()
-    for rule in $RULES ; do 
+    for rule in "${RULES[@]}" ; do 
         if [[ "$rule" == *"$DELIMITER"* ]] ; then 
             IFS="$DELIMITER" read -ra "RULE_NUMS" <<< "$rule" 
             for (( r="${RULE_NUMS[1]}"; r>="${RULE_NUMS[0]}"; r-- )); do 
@@ -31,6 +32,7 @@ iptables_delete ()
         iptables_delete_for_real_now "$CHAIN" "$rule"; 
     done
 }
+
 
 iptables_delete_for_real_now ()
 {
